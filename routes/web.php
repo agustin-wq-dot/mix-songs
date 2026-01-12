@@ -18,4 +18,4 @@ require __DIR__.'/settings.php';
 
 Route::get('/mixer', function () {
     return Inertia::render('Mixer');
-});
+})->middleware(['auth', 'verified']);

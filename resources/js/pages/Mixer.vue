@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Sun, Moon, Volume2, Play, Pause, StopCircle, Music, Youtube, Info, Clock, Volume1, Sparkles } from 'lucide-vue-next'
+import { Sun, Moon, Volume2, Play, Pause, StopCircle, Music, Youtube } from 'lucide-vue-next'
 
 interface TrackTime {
   minutes: number
@@ -398,58 +398,43 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 transition-colors duration-500">
-    <div class="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+  <div class="min-h-screen bg-background transition-colors duration-300">
+    <div class="p-6 space-y-6 max-w-7xl mx-auto">
       <!-- Header -->
-      <Card class="border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/5 shadow-lg backdrop-blur-sm">
-        <CardContent class="p-6 md:p-8">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-            <div class="space-y-2">
-              <div class="flex items-center gap-3">
-                <div class="p-2 bg-gradient-to-br from-primary to-secondary rounded-xl shadow-md">
-                  <Music class="h-6 w-6 text-primary-foreground" />
-                </div>
-                <div>
-                  <h1 class="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    YouTube Audio Mixer
-                  </h1>
-                  <p class="text-muted-foreground mt-1 flex items-center gap-1">
-                    <Sparkles class="h-3 w-3" />
-                    Mix two YouTube tracks seamlessly
-                  </p>
-                </div>
+      <Card class="border-0 bg-gradient-to-r from-primary/5 to-secondary/5">
+        <CardContent class="p-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <Music class="h-6 w-6 text-primary" />
+                <h1 class="text-3xl font-bold tracking-tight text-foreground">YouTube Audio Mixer</h1>
               </div>
+              <p class="text-muted-foreground">Mix two YouTube tracks seamlessly</p>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
               <Button
                 @click="toggleDarkMode"
                 variant="ghost"
                 size="icon"
-                class="rounded-full hover:bg-primary/10 transition-all duration-300"
-                :title="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+                class="rounded-full"
               >
                 <Sun v-if="!isDarkMode" class="h-5 w-5" />
                 <Moon v-else class="h-5 w-5" />
+                <span class="sr-only">Toggle theme</span>
               </Button>
-              <div class="flex gap-3">
+              <div class="flex gap-2">
                 <Button 
                   @click="playMix" 
                   size="lg"
                   :disabled="!tracks[0].videoId || !tracks[1].videoId"
-                  :class="[
-                    'transition-all duration-300 shadow-lg hover:shadow-xl',
-                    isMixing 
-                      ? 'bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/90 hover:to-destructive/70' 
-                      : 'bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90'
-                  ]"
-                  class="group"
+                  :class="isMixing ? 'bg-destructive hover:bg-destructive/90' : 'bg-primary hover:bg-primary/90'"
                 >
-                  <Play v-if="!isMixing" class="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
-                  <Pause v-else class="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                  <Play v-if="!isMixing" class="mr-2 h-4 w-4" />
+                  <Pause v-else class="mr-2 h-4 w-4" />
                   {{ isMixing ? 'Stop Mix' : 'Play Mix' }}
                 </Button>
-                <Button @click="stopAll" variant="outline" size="lg" class="border-2 hover:bg-destructive/10 hover:border-destructive/30 transition-all duration-300">
-                  <StopCircle class="mr-2 h-5 w-5" />
+                <Button @click="stopAll" variant="outline" size="lg">
+                  <StopCircle class="mr-2 h-4 w-4" />
                   Stop All
                 </Button>
               </div>
@@ -459,47 +444,28 @@ onUnmounted(() => {
       </Card>
 
       <!-- Track Cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card
           v-for="(track, index) in tracks"
           :key="track.id"
-          class="overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1"
-          :class="[
-            'bg-gradient-to-br from-card to-card/95 backdrop-blur-sm',
-            track.id === 1 ? 'border-l-4 border-l-primary' : 'border-l-4 border-l-secondary'
-          ]"
+          class="overflow-hidden"
         >
-          <CardHeader class="bg-gradient-to-r from-secondary/10 via-transparent to-muted/5 border-b">
+          <CardHeader class="bg-gradient-to-r from-secondary/5 to-muted/5">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="p-2 rounded-lg" :class="track.id === 1 ? 'bg-primary/10' : 'bg-secondary/10'">
-                  <Youtube class="h-5 w-5" :class="track.id === 1 ? 'text-primary' : 'text-secondary'" />
-                </div>
-                <div>
-                  <CardTitle class="text-foreground text-xl">{{ track.name }}</CardTitle>
-                  <p class="text-sm text-muted-foreground flex items-center gap-1">
-                    <Clock class="h-3 w-3" />
-                    {{ formatTime(timeToSeconds(track.startTime)) }}
-                  </p>
-                </div>
+                <Youtube class="h-5 w-5 text-destructive" />
+                <CardTitle class="text-foreground">{{ track.name }}</CardTitle>
               </div>
               <div class="flex items-center gap-2">
-                <div class="relative">
-                  <div class="w-3 h-3 rounded-full animate-ping absolute" :class="[
-                    track.playing 
-                      ? 'bg-green-500/60' 
-                      : 'bg-muted-foreground/20'
-                  ]"></div>
-                  <div class="w-3 h-3 rounded-full" :class="[
-                    track.playing 
-                      ? 'bg-green-500' 
-                      : 'bg-muted-foreground'
-                  ]"></div>
-                </div>
-                <span class="text-sm font-medium px-2 py-1 rounded-full" :class="[
+                <div class="w-2 h-2 rounded-full" :class="[
                   track.playing 
-                    ? 'bg-green-500/10 text-green-600 dark:text-green-400' 
-                    : 'bg-muted/50 text-muted-foreground'
+                    ? 'bg-green-500 animate-pulse' 
+                    : 'bg-muted-foreground'
+                ]"></div>
+                <span class="text-sm font-medium" :class="[
+                  track.playing 
+                    ? 'text-green-600 dark:text-green-400' 
+                    : 'text-muted-foreground'
                 ]">
                   {{ track.playing ? 'Playing' : 'Stopped' }}
                 </span>
@@ -509,66 +475,46 @@ onUnmounted(() => {
           
           <CardContent class="p-6 space-y-6">
             <!-- URL Input -->
-            <div class="space-y-3">
-              <Label for="youtube-url" class="flex items-center gap-2 text-foreground">
-                <Youtube class="h-4 w-4" />
-                YouTube URL
-              </Label>
-              <div class="relative">
+            <div class="space-y-2">
+              <Label for="youtube-url">YouTube URL</Label>
+              <div class="flex items-center gap-2">
                 <Input
                   id="youtube-url"
                   v-model="track.youtubeUrl"
                   placeholder="https://www.youtube.com/watch?v=..."
                   @blur="handleUrlChange(index, track.youtubeUrl)"
-                  :class="[
-                    'pl-10 pr-4 py-6 rounded-xl border-2 transition-all duration-300',
-                    track.error 
-                      ? 'border-destructive focus:ring-destructive' 
-                      : track.videoId 
-                        ? 'border-green-500/50 focus:ring-green-500/30' 
-                        : 'focus:ring-primary/30'
-                  ]"
+                  :class="track.error ? 'border-destructive' : ''"
                 />
-                <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
-                  <svg class="w-5 h-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                  </svg>
-                </div>
               </div>
-              <p v-if="track.error" class="text-sm text-destructive flex items-center gap-2 p-3 bg-destructive/10 rounded-lg">
-                <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                </svg>
-                {{ track.error }}
-              </p>
-              <p v-if="track.videoId && !track.error" class="text-sm text-green-600 dark:text-green-400 flex items-center gap-2 p-3 bg-green-500/10 rounded-lg">
+              <p v-if="track.error" class="text-sm text-destructive">{{ track.error }}</p>
+              <p v-if="track.videoId && !track.error" class="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
                 Video loaded successfully
               </p>
+              <p class="text-xs text-muted-foreground">
+                Supported formats: youtube.com/watch?v=..., youtu.be/..., youtube.com/embed/...
+              </p>
             </div>
 
             <!-- Time Controls -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4">
               <!-- Start Time -->
-              <div class="space-y-3 p-4 bg-muted/20 rounded-xl">
-                <Label class="flex items-center gap-2">
-                  <Clock class="h-4 w-4" />
-                  Start Time
-                </Label>
-                <div class="flex gap-3">
-                  <div class="space-y-2 flex-1">
+              <div class="space-y-2">
+                <Label>Start Time</Label>
+                <div class="flex gap-2">
+                  <div class="space-y-1 flex-1">
                     <Label class="text-xs text-muted-foreground">Minutes</Label>
                     <Input
                       type="number"
                       :value="track.startTime.minutes"
                       @change="e => handleTimeChange(index, 'startTime', 'minutes', e.target.value)"
                       min="0"
-                      class="text-center py-5 rounded-lg bg-background"
+                      class="text-center"
                     />
                   </div>
-                  <div class="space-y-2 flex-1">
+                  <div class="space-y-1 flex-1">
                     <Label class="text-xs text-muted-foreground">Seconds</Label>
                     <Input
                       type="number"
@@ -576,38 +522,30 @@ onUnmounted(() => {
                       @change="e => handleTimeChange(index, 'startTime', 'seconds', e.target.value)"
                       min="0"
                       max="59"
-                      class="text-center py-5 rounded-lg bg-background"
+                      class="text-center"
                     />
                   </div>
                 </div>
-                <div class="px-2 py-1.5 bg-primary/5 rounded-lg">
-                  <p class="text-xs font-medium">
-                    Starts at: <span class="text-primary">{{ formatTime(timeToSeconds(track.startTime)) }}</span>
-                  </p>
-                </div>
+                <p class="text-xs text-muted-foreground">
+                  Starts at: {{ formatTime(timeToSeconds(track.startTime)) }}
+                </p>
               </div>
 
               <!-- Stop Time for Track 1 -->
-              <div v-if="track.id === 1" class="space-y-3 p-4 bg-destructive/5 rounded-xl">
-                <Label class="flex items-center gap-2">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-                  </svg>
-                  Stop Time (when Track 2 starts)
-                </Label>
-                <div class="flex gap-3">
-                  <div class="space-y-2 flex-1">
+              <div v-if="track.id === 1" class="space-y-2">
+                <Label>Stop Time (when Track 2 starts)</Label>
+                <div class="flex gap-2">
+                  <div class="space-y-1 flex-1">
                     <Label class="text-xs text-muted-foreground">Minutes</Label>
                     <Input
                       type="number"
                       :value="track.stopTime?.minutes || 0"
                       @change="e => handleTimeChange(index, 'stopTime', 'minutes', e.target.value)"
                       min="0"
-                      class="text-center py-5 rounded-lg bg-background"
+                      class="text-center"
                     />
                   </div>
-                  <div class="space-y-2 flex-1">
+                  <div class="space-y-1 flex-1">
                     <Label class="text-xs text-muted-foreground">Seconds</Label>
                     <Input
                       type="number"
@@ -615,62 +553,47 @@ onUnmounted(() => {
                       @change="e => handleTimeChange(index, 'stopTime', 'seconds', e.target.value)"
                       min="0"
                       max="59"
-                      class="text-center py-5 rounded-lg bg-background"
+                      class="text-center"
                     />
                   </div>
                 </div>
-                <div class="px-2 py-1.5 bg-destructive/10 rounded-lg">
-                  <p class="text-xs font-medium">
-                    Stops at: <span class="text-destructive">{{ formatTime(timeToSeconds(track.stopTime)) }}</span>
-                  </p>
-                </div>
+                <p class="text-xs text-muted-foreground">
+                  Stops at: {{ formatTime(timeToSeconds(track.stopTime)) }}
+                </p>
               </div>
             </div>
 
             <!-- Volume Control -->
-            <div class="space-y-4 p-4 bg-gradient-to-r from-muted/10 to-transparent rounded-xl">
+            <div class="space-y-3">
               <div class="flex justify-between items-center">
-                <Label class="flex items-center gap-2">
-                  <Volume1 class="h-4 w-4" />
-                  Track Volume
-                </Label>
-                <div class="px-3 py-1.5 bg-primary/10 rounded-full">
-                  <span class="text-sm font-bold text-primary">{{ track.volume }}%</span>
-                </div>
+                <Label>Track Volume</Label>
+                <span class="text-sm font-medium text-foreground">{{ track.volume }}%</span>
               </div>
               <Slider
                 :model-value="[track.volume]"
                 @update:model-value="(v) => updateTrackVolume(index, v)"
                 :max="100"
                 :step="1"
-                class="py-2"
               />
-              <div class="flex justify-between text-xs text-muted-foreground px-1">
-                <span>Min</span>
-                <span>Mid</span>
-                <span>Max</span>
+              <div class="flex justify-between text-xs text-muted-foreground">
+                <span>0%</span>
+                <span>100%</span>
               </div>
             </div>
 
             <!-- YouTube Player -->
-            <div class="space-y-3">
-              <Label class="flex items-center gap-2">
-                <Play class="h-4 w-4" />
-                Preview
-              </Label>
-              <div class="player-container aspect-video bg-gradient-to-br from-muted to-muted/50 rounded-xl overflow-hidden shadow-inner">
-                <div v-if="!track.videoId" class="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/50 to-background">
-                  <div class="text-center p-8">
-                    <div class="text-muted-foreground mb-4">
-                      <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-secondary/10">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                      </div>
+            <div class="space-y-2">
+              <Label>Preview</Label>
+              <div class="player-container aspect-video bg-muted rounded-lg overflow-hidden">
+                <div v-if="!track.videoId" class="w-full h-full flex items-center justify-center">
+                  <div class="text-center p-6">
+                    <div class="text-muted-foreground mb-3">
+                      <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
                     </div>
-                    <p class="text-muted-foreground font-medium">Enter a YouTube URL to load the player</p>
-                    <p class="text-sm text-muted-foreground mt-2">Preview will appear here</p>
+                    <p class="text-muted-foreground">Enter a YouTube URL to load the player</p>
                   </div>
                 </div>
               </div>
@@ -680,125 +603,88 @@ onUnmounted(() => {
       </div>
 
       <!-- Master Controls -->
-      <Card class="border-0 bg-gradient-to-br from-card to-card/95 backdrop-blur-sm shadow-xl">
-        <CardHeader class="border-b">
-          <CardTitle class="flex items-center gap-3 text-2xl">
-            <div class="p-2 bg-gradient-to-r from-primary to-secondary rounded-lg">
-              <Volume2 class="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Master Controls
-            </span>
+      <Card>
+        <CardHeader>
+          <CardTitle class="flex items-center gap-2">
+            <Volume2 class="h-5 w-5" />
+            Master Controls
           </CardTitle>
         </CardHeader>
-        <CardContent class="p-6 space-y-8">
+        <CardContent class="space-y-6">
           <!-- Master Volume -->
-          <div class="space-y-4">
+          <div class="space-y-3">
             <div class="flex justify-between items-center">
-              <Label class="text-lg font-semibold flex items-center gap-3">
-                <div class="w-2 h-8 bg-gradient-to-b from-primary to-secondary rounded-full"></div>
-                Master Volume
-              </Label>
-              <div class="px-4 py-2 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full">
-                <span class="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  {{ masterVolume }}%
-                </span>
-              </div>
+              <Label class="text-base">Master Volume</Label>
+              <span class="text-lg font-medium text-foreground">{{ masterVolume }}%</span>
             </div>
             <Slider
               :model-value="[masterVolume]"
               @update:model-value="updateMasterVolume"
               :max="100"
               :step="1"
-              class="py-4"
             />
-            <div class="flex justify-between text-sm text-muted-foreground px-2">
-              <span class="flex items-center gap-1">
-                <Volume1 class="h-3 w-3" />
-                Silent
-              </span>
-              <span class="flex items-center gap-1">
-                <Volume2 class="h-3 w-3" />
-                Normal
-              </span>
-              <span class="flex items-center gap-1">
-                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                </svg>
-                Max
-              </span>
+            <div class="flex justify-between text-sm text-muted-foreground">
+              <span>Silent</span>
+              <span>Normal</span>
+              <span>Max</span>
             </div>
           </div>
 
           <!-- Mix Status -->
-          <div class="p-6 bg-gradient-to-r from-primary/5 via-secondary/5 to-transparent rounded-2xl border">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div class="flex items-center gap-4">
-                <div class="relative">
-                  <div class="w-4 h-4 rounded-full animate-ping absolute" :class="[
-                    isMixing 
-                      ? 'bg-green-500/60' 
-                      : 'bg-muted-foreground/20'
-                  ]"></div>
-                  <div class="w-4 h-4 rounded-full" :class="[
-                    isMixing 
-                      ? 'bg-green-500' 
-                      : 'bg-muted-foreground'
-                  ]"></div>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-foreground">
-                    {{ isMixing ? 'Mixing in progress...' : 'Ready to mix' }}
-                  </h3>
-                  <p class="text-sm text-muted-foreground">
-                    {{ isMixing ? 'Track 2 will start automatically' : 'Set your times and press Play Mix' }}
-                  </p>
-                </div>
-              </div>
-              <div class="flex items-center gap-2">
-                <div class="text-center px-4 py-2 bg-gradient-to-br from-muted to-background rounded-xl">
-                  <div class="text-2xl font-bold" :class="[
-                    isMixing 
-                      ? 'text-green-600 dark:text-green-400' 
-                      : 'text-muted-foreground'
-                  ]">
-                    {{ tracks.filter(t => t.playing).length }}/2
-                  </div>
-                  <div class="text-xs text-muted-foreground">tracks playing</div>
-                </div>
-              </div>
+          <div class="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full" :class="[
+                isMixing 
+                  ? 'bg-green-500 animate-pulse' 
+                  : 'bg-muted-foreground'
+              ]"></div>
+              <span class="text-sm text-foreground">
+                {{ isMixing ? 'Mixing in progress...' : 'Ready to mix' }}
+              </span>
+            </div>
+            <div class="text-sm text-muted-foreground">
+              {{ tracks.filter(t => t.playing).length }}/2 tracks playing
             </div>
           </div>
         </CardContent>
       </Card>
 
       <!-- Instructions -->
-      <Alert class="border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/5 backdrop-blur-sm shadow-lg">
+      <Alert class="bg-primary/5 border-primary/20">
         <AlertDescription class="text-foreground">
-          <div class="space-y-4">
-            <div class="flex items-center gap-3">
-              <div class="p-2 bg-gradient-to-br from-primary to-secondary rounded-xl">
-                <Info class="h-5 w-5 text-primary-foreground" />
-              </div>
-              <h4 class="font-bold text-xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                How to use the Mixer
-              </h4>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div v-for="(step, index) in [
-                'Enter YouTube URLs for both tracks',
-                'Set start time for Track 1 and stop time (when Track 2 should start)',
-                'Set start time for Track 2',
-                'Adjust individual track volumes as needed',
-                'Click "Play Mix" to start the mix',
-                'Use Master Volume to control overall volume'
-              ]" :key="index" class="flex items-start gap-3 p-4 bg-white/50 dark:bg-black/20 rounded-xl hover:bg-white/70 dark:hover:bg-black/30 transition-all duration-300">
-                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground text-sm font-bold shadow-md">
-                  {{ index + 1 }}
-                </span>
-                <span class="text-sm font-medium">{{ step }}</span>
-              </div>
-            </div>
+          <div class="space-y-3">
+            <h4 class="font-semibold text-lg flex items-center gap-2">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+              How to use
+            </h4>
+            <ol class="space-y-2 pl-1">
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">1</span>
+                <span>Enter YouTube URLs for both tracks</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">2</span>
+                <span>Set start time for Track 1 and stop time (when Track 2 should start)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">3</span>
+                <span>Set start time for Track 2</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">4</span>
+                <span>Adjust individual track volumes as needed</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">5</span>
+                <span>Click "Play Mix" to start the mix</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-medium">6</span>
+                <span>Use Master Volume to control overall volume</span>
+              </li>
+            </ol>
           </div>
         </AlertDescription>
       </Alert>
@@ -814,84 +700,12 @@ onUnmounted(() => {
 .youtube-player-container {
   width: 100%;
   height: 100%;
-  border-radius: 0.75rem;
-  overflow: hidden;
 }
 
-/* Smooth transitions for theme and elements */
+/* Smooth transitions for theme */
 * {
-  transition-property: background-color, border-color, color, transform, box-shadow;
-  transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: hsl(var(--muted));
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary));
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.8);
-}
-
-/* Glow effects */
-.glow-effect {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-}
-
-.dark .glow-effect {
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
-}
-
-/* Smooth gradient animations */
-.bg-gradient-animate {
-  background-size: 200% 200%;
-  animation: gradientShift 8s ease infinite;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Pulse animation for status indicators */
-@keyframes statusPulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.05);
-  }
-}
-
-.animate-status-pulse {
-  animation: statusPulse 2s ease-in-out infinite;
-}
-
-/* Smooth input focus effects */
-input:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  transition-property: background-color, border-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
 }
 </style>
